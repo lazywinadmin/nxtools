@@ -20,14 +20,14 @@ Param(
 try{
     ################
     # EDIT THIS PART
-    $guid = '<guid here>'
-    $moduleName = "SpaceX" # get from source control or module ?
+    $guid = 'f6349442-d0c2-4026-9445-a520005b5d65'
+    $moduleName = "nxtools" # get from source control or module ?
     $author = 'Francois-Xavier Cat' # fetch from source or module
-    $description = 'SpaceX is a module wrapped around the spacex API (github.com/r-spacex/SpaceX-API)' # fetch from module ?
+    $description = 'nxtools is a set of tools to use in *nx Operationg systems' # fetch from module ?
     $companyName = 'lazywinadmin.com' # fetch from module ?
     $projectUri = "https://github.com/lazywinadmin/$moduleName" # get from module of from source control, env var
     $licenseUri = "https://github.com/lazywinadmin/$moduleName/blob/master/LICENSE.md"
-    $tags = @('SpaceX', 'Falcon', 'Space', 'Rocket', 'ElonMusk')
+    $tags = @('linux','nx')
     ################
 
     #$rootpath = Split-Path -path $PSScriptRoot -parent
