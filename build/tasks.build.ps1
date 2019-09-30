@@ -74,7 +74,8 @@ task -Name clean {
 }
 
 task -Name deploy {
-    Invoke-PSDeploy -Path "$buildPath\.psdeploy.ps1" -Force
+    $PsDeployFile = Join-Path -Path $buildPath -ChildPath '.psdeploy.ps1'
+    Invoke-PSDeploy -Path $PsDeployFile -Force
 }
 
 task -Name test {
