@@ -35,7 +35,8 @@ task -Name build {
     # Append existing PSM1 content from source
     if(Test-Path -Path "$srcPath\source.psm1")
     {
-        get-content -path "$srcPath\source.psm1"| Out-File -FilePath "$modulePath\$moduleName.psm1" -Append -Encoding utf8
+        get-content -path "$srcPath\source.psm1"|
+            Out-File -FilePath "$modulePath\$moduleName.psm1" -Append -Encoding utf8
     }
 
     # Copy the Manifest to the build (psd1)
