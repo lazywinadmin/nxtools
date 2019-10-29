@@ -8,7 +8,7 @@ trigger:
 resources:
 - repo: self
 queue:
-  name: Hosted Ubuntu 1804
+  name: Hosted Ubuntu 1604
 steps:
 - powershell: |
     .\build.ps1 -InstallDependencies:$true -verbose -tasks 'setEnvironment','build','test','deploy'
