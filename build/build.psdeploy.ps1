@@ -3,6 +3,8 @@
     $env:modulePath is set in the build.ps1
     $env:moduleName is set in the build.ps1
     $ENV:BH* are set by the BuildHelpers module
+
+    https://psdeploy.readthedocs.io/en/latest/PSDeploy-Configuration-Files/
 #>
 if(
     $env:modulePath -and
@@ -16,7 +18,7 @@ if(
             FromSource -Source $env:modulePath
             To -Targets PSGallery
             WithOptions -Options @{
-                ApiKey = $env:psgallerykey
+                ApiKey = $env:PSGalleryKey
             }
         }
     }

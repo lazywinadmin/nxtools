@@ -4,16 +4,15 @@ task -Name nothing {
 }
 
 task -Name setEnvironment {
-    # Run test build
-    # Read the current environment, populate env vars
+    # Set the current environment, populate env vars
     Set-BuildEnvironment -Path $rootpath
 
     # Read back the env vars
-    Get-Item ENV:* | Sort-Object -property Name
+    Get-Item ENV:* |
+        Sort-Object -property Name
 }
 
 task -Name build {
-    Write-Verbose -Message "Task: Build"
     # Retrieve public functions
     $publicFiles = @(Get-ChildItem -Path $srcPath\public\*.ps1 -ErrorAction SilentlyContinue)
     # Retrieve private functions
@@ -22,7 +21,7 @@ task -Name build {
     # Create build output directory if does not exist yet
     if(-not (Test-Path -path $modulePath))
     {
-        New-Item -Path $modulePath -ItemType Directory
+        [void](New-Item -Path $modulePath -ItemType Directory)
     }
 
     # Build PSM1 file with all the functions
@@ -35,13 +34,13 @@ task -Name build {
     # Append existing PSM1 content from source
     if(Test-Path -Path "$srcPath\source.psm1")
     {
-        get-content -path "$srcPath\source.psm1"|
+        Get-Content -path "$srcPath\source.psm1" |
             Out-File -FilePath "$modulePath\$moduleName.psm1" -Append -Encoding utf8
     }
 
     # Copy the Manifest to the build (psd1)
     Copy-Item -Path "$srcPath\source.psd1" -Destination $modulePath
-    Rename-Item -Path "$modulePath\source.psd1" -NewName "$moduleName.psd1" -PassThru
+    Rename-Item -Path "$modulePath\source.psd1" -NewName "$moduleName.psd1" -PassThru -Force
 
     # Find next module version (BuildHelpers module)
     Write-Verbose -Message "Find next module version (BuildHelpers module)"
@@ -70,12 +69,12 @@ task -Name clean {
     Remove-Item -confirm:$false -Recurse -path $buildOutputPath -ErrorAction SilentlyContinue
 
     # Delete env variables created
-    Get-ChildItem -Path env:modulepath,env:modulename,env:bh* -ErrorAction SilentlyContinue | remove-item
+    Get-ChildItem -Path env:modulepath,env:modulename,env:bh* -ErrorAction SilentlyContinue |
+        Remove-Item
 }
 
 task -Name deploy {
-    $PsDeployFile = Join-Path -Path $buildPath -ChildPath 'build.psdeploy.ps1'
-    Invoke-PSDeploy -Path $PsDeployFile -Force
+    Invoke-PSDeploy -Path $buildPSDeployFilePath -Force
 }
 
 task -Name test {
@@ -90,7 +89,7 @@ task -Name test {
                 }
             }
         OutputFormat    = 'NUnitXml'
-        OutputFile      = "$buildOutputPath\$testResult"
+        OutputFile      = $buildOutputTestResultFilePath
         PassThru        = $true
         #Show            = 'Failed', 'Fails', 'Summary'
         #Tags            = 'Build'
@@ -109,7 +108,7 @@ task -name analyze {
     $PSScriptAnalyzerParams = @{
         IncludeDefaultRules = $true
         Path                = "$modulePath" # $ModuleName.psd1"
-        Settings            = "$buildPath\ScriptAnalyzerSettings.psd1"
+        Settings            = $buildPSScriptAnalyzerSettingsFilePath
         Severity            = 'Warning','Error'
         Recurse             = $true
     }

@@ -31,20 +31,23 @@ try{
     ################
 
     #$rootpath = Split-Path -path $PSScriptRoot -parent
-    $rootpath = $PSScriptRoot
-    $buildOutputPath = "$rootpath\buildoutput"
-    $buildPath = "$rootpath\build"
-    $srcPath = "$rootpath\src"
-    $testPath = "$rootpath\tests"
-    $modulePath = "$buildoutputPath\$moduleName"
-    $dependenciesPath = "$rootpath\dependencies" # folder to store modules
-    $testResult = "Test-Results.xml"
+    $rootpath = $PSScriptRoot                       # \             -- root of the project
+    $buildOutputPath = "$rootpath\buildoutput"      # \buildoutput  -- final module format folder location and tests results files
+    $buildPath = "$rootpath\build"                  # \build        -- scripts used to build the module
+    $srcPath = "$rootpath\src"                      # \src          -- source files such as Public/Private etc...
+    $testPath = "$rootpath\tests"                   # \tests        -- Pester tests
+    $modulePath = "$buildoutputPath\$moduleName"    # \buildoutput\<modulename> -- final module format
+    $dependenciesPath = "$rootpath\dependencies"    # \dependencies -- folder to store modules
 
     $env:moduleName = $moduleName
     $env:modulePath = $modulePath
 
-    $requirementsFilePath = "$buildPath\requirements.psd1" # contains dependencies
-    $buildTasksFilePath = "$buildPath\tasks.build.ps1" # contains tasks to execute
+    $buildRequirementsFilePath = "$buildPath\build.psdepend.psd1" # contains dependencies/requirements
+    $buildTasksFilePath = "$buildPath\build.tasks.ps1" # contains tasks to execute
+    $buildPSDeployFilePath = "$buildPath\build.psdeploy.ps1" # contains deployment info used by psdeploy
+    $buildPSScriptAnalyzerSettingsFilePath = "$buildPath\build.scriptanalyzersettings.psd1" # contains deployment info used by psdeploy
+
+    $buildOutputTestResultFilePath = "$buildoutputPath\test-results.xml"
 
     if($InstallDependencies)
     {
@@ -61,6 +64,9 @@ try{
             $null = Install-PackageProvider @providerBootstrapParams
             Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
         }
+
+        # (Test)Install
+
 
         if (-not(Get-Module -Listavailable -Name PSDepend)) {
             Write-verbose "BootStrapping PSDepend"
@@ -82,15 +88,16 @@ try{
         # Install module dependencies with PSDepend
         $PSDependParams = @{
             Force = $true
-            Path = $requirementsFilePath
+            Path = $buildRequirementsFilePath
         }
         if($PSBoundParameters['verbose']) { $PSDependParams.add('verbose',$verbose)}
         Invoke-PSDepend @PSDependParams -Target $dependenciesPath
         Write-Verbose -Message "Project Bootstrapped"
+    }else{
+        Write-Verbose -Message "Skip InstallDependencies"
     }
 
     # Start build using InvokeBuild module
-    Write-Verbose -Message "Start Build"
     Invoke-Build -Result 'Result' -File $buildTasksFilePath -Task $tasks
 
     # Return error to CI
