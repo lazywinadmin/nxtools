@@ -20,7 +20,7 @@ Param(
 try{
     ################
     # EDIT THIS PART
-    $guid = 'f6349442-d0c2-4026-9445-a520005b5d65'
+    $guid = 'd310b8a9-ca86-44f0-bbd2-b5d10dfe496c'
     $moduleName = "nxtools" # get from source control or module ?
     $author = 'Francois-Xavier Cat' # fetch from source or module
     $description = 'nxtools is a set of tools to use in *nx Operationg systems' # fetch from module ?
