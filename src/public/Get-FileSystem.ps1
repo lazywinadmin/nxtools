@@ -17,8 +17,7 @@ function Get-FileSystem
 #>
     [CmdletBinding()]
     PARAM(
-        [ValidateNotNullOrEmpty]
-        $Path)
+        [System.String]$Path)
     try{
         $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).mycommand
 
