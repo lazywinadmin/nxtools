@@ -18,7 +18,7 @@ if(
             FromSource -Source $env:modulePath
             To -Targets PSGallery
             WithOptions -Options @{
-                ApiKey = $env:PSGalleryKey
+                ApiKey = $env:psgallerykey
             }
         }
     }
